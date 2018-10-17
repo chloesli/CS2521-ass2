@@ -78,6 +78,7 @@ Li ListofUrls() {
    
     fclose(urls);
     return new;
+    // hi this is a new file
 }
 
 static ListNode *MakeNode(char *val) {
