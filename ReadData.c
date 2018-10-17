@@ -1,6 +1,12 @@
 // By...Midog, chlodog, Berndog
 
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include "Graph.h"
+#include "pagerank.h"
+#include "ReadData.h"
 // Implementations
 
 // GetCollection()
@@ -8,7 +14,7 @@
 Li GetCollection() {
    // printf("%d\n",nurls);
 
-    FILE *urls = fopen("ex1/collection.txt","r");
+    FILE *urls = fopen("TestExamples/ex1/collection.txt","r");
 
     Li new = malloc(sizeof(struct List));
     new->nvalues = 0;
