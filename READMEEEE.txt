@@ -3,17 +3,17 @@
 
 ****To do List:
 
-1) Linked List
-    -> Make LList.h
-    -> Implement functions of LList.h in LList.c
+1) Linked List ***********
+    -> Make LList.h***********
+    -> Implement functions of LList.h in LList.c***********
     
 2) Graphs
-    -> Make Graph.h
-    -> Implement functions of Graph.h in Graph.c
+    -> Make Graph.h********
+    -> Implement functions of Graph.h in Graph.c************
     
 3) Read Data file
-    -> Make ReadData.h
-    -> GetCollection()
+    -> Make ReadData.h***************
+    -> GetCollection()****************
     -> GetGraph(List_of_urls)
     -> GetInvertedList(List_of_urls)
     -> Implement functions of ReadData.h in ReadData.c

@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <string.h>
 #include "Graph.h"
-/*#include "Queue.h" */
 
 #define TRUE 1
 #define FALSE 0

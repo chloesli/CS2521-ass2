@@ -4,29 +4,32 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+
 #include "Graph.h"
 #include "pagerank.h"
 #include "ReadData.h"
+#include "LList.h"
+
+
 // Implementations
 
 // GetCollection()
 // -> Create a set (list) of urls to process by reading data from file collection.txt
-Li GetCollection() {
+
+LList GetCollection() {
    // printf("%d\n",nurls);
 
     FILE *urls = fopen("TestExamples/ex1/collection.txt","r");
 
-    Li new = malloc(sizeof(struct List));
-    new->nvalues = 0;
-
-    struct ListNode *newNode;
-    struct ListNode *curr = NULL;
+    LListNode *curr = NULL;
+    LList new = newLList();
     char val[1000];
 
     while( fscanf(urls, "%s", val) == 1){
-        newNode = MakeNode(val);
+    
+        LListNode *newNode = newLListNode(val);
 
-        if (new->nvalues == 0) {
+        if (new->nitems == 0) {
             new->first = newNode;
             newNode->prev = NULL;
             curr = newNode;
@@ -41,23 +44,15 @@ Li GetCollection() {
 
         new->last = newNode;
         new->last->next = NULL;
-        new->nvalues++;
+        new->nitems++;
 
     }
 
     fclose(urls);
     return new;
-    // hi this is a new file
+    
 }
 
-ListNode *MakeNode(char *val) {
-	ListNode *new;
-	new = malloc(sizeof(ListNode));
-	assert(new != NULL);
-	new->value = strdup(val);
-	new->prev = new->next = NULL;
-	return new;
-}
 
 // GetGraph(List_of_urls)
 // Create empty graph (use graph ADT in say graph.h and graph.c)
