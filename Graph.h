@@ -3,6 +3,14 @@
 
 #ifndef GRAPH_H
 #define GRAPH_H
+typedef unsigned char Num;
+
+typedef struct GraphRep {
+	int   nV;
+	int   maxV;
+	char  **vertex;
+	Num   **edges;
+} GraphRep;
 
 typedef struct GraphRep *Graph;
 
