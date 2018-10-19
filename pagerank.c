@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     FILE *data;
     
     
-    if ((data = fopen("TestExamples/ex1/collection.txt","r")) == NULL) {
+    if ((data = fopen("collection.txt","r")) == NULL) {
 	    fprintf(stderr, "Couldn't open file: collection.txt");
 	    return 1;
     }
@@ -41,7 +41,14 @@ int main(int argc, char *argv[]) {
     for (curr = urlList->first; curr != NULL; curr=curr->next) {
         printf("%s\n", curr->value);
     }
-
+    
+    printf("\n");
+    Graph g = GetGraph(urlList); 
+    
+    showGraph(g, 1);
+    printf("\n");
+    showGraph(g, 0);
+    printf("\n");
 
   return 0;
 }

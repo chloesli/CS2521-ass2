@@ -14,6 +14,8 @@
 // GetCollection
 LList GetCollection();
 
+Graph GetGraph(LList urls);
+
 
 
 // GetGraph(List_of_urls)
