@@ -87,7 +87,9 @@ Graph GetGraph(LList urls) { // Makes a new empty graph
               } 
               // if the word url is in urlxx continue 
             else if (strstr(dest, "url")){
-                addEdge(g, curr->value, dest);
+                if (!strstr(curr->value, dest)) {
+                    addEdge(g, curr->value, dest);
+                }
             } 
                 
         } 

@@ -26,6 +26,8 @@ double getWout(Graph g, int pI, int pJ, int *outlinks);
 
 void getOutlinks(Graph g, int *outlinks);
 void getInlinks(Graph g, int *inlinks);
+
+int getLargest(double **PR, int *checked, int N, int it);
 int main(int argc, char *argv[]) {
 
     if (argc != 4) {
@@ -60,160 +62,191 @@ int main(int argc, char *argv[]) {
 
     double d = atof(argv[1]);
     double diffPR = atof(argv[2]); 
-
     int maxIterations = atoi(argv[3]);
     
     calculatePageRank(g, d, diffPR, maxIterations);
+
   return 0;
 }
 
 void calculatePageRank(Graph g, double d, double diffPR, int maxIterations){
-    // Array containing number of outlinks 
+    // Creating and initialising arrays that contain the number of inlinks and outlinks of each page
     int *outlinks = malloc(sizeof(int) * g->nV);
     getOutlinks(g, outlinks);
     int *inlinks = malloc(sizeof(int) * g->nV);
     getInlinks(g, inlinks);
-        int x = 0;
-    for (x = 0; x < g->nV; x++) {
-        printf("%s has: %d inlinks, %d outlinks\n", g->vertex[x], inlinks[x], outlinks[x]);
-    }
-    printf("\n");
+    
+    /************************************************************
+     CALCULATE PAGERANK 
+    ************************************************************/
+   
+    // N = number of URLs in collection
     double N = g->nV;
-    int i = 0;
-    
+    // Mallocing space for a matrix to store values of PageRank
     double **PR = malloc(sizeof(double) * N); 
-    
-    // For every URL, set PR to 1/N 
+    // For every URL, set the initial PR to 1/N 
+    int i = 0;
     for (i = 0; i < N; i++) {
-        PR[i] = malloc(sizeof(double) * maxIterations); 
-        PR[i][0] = 1/N;  
-        
-        printf("%.7f", PR[i][0]);
+        PR[i] = malloc(sizeof(double) * (maxIterations + 1)); 
     }
     
-    double mult = ((1 - d)/N) + d; 
-    // Iterations 
+    double diff = diffPR;
+    double mult = ((1 - d)/N); 
     int it = 0;
-    // Diff
-    double diff = diffPR; 
-    // Values of iteration 
     int t = 0; 
-    float PageSum = 0; 
-    // For every page
-    for (i = 0; i < g->nV; i++) {
-        diff = diffPR; 
-        t = 0;
-        it = 0;
-        while ((it < maxIterations) && (diff >= diffPR)) {   
-            t = it + 1; 
-            diff = 0;
-            // For every link that Pi is connected to
-                PageSum = getSum(g, i, PR, it, outlinks, inlinks);
-                PR[i][t] = mult * PageSum;
-            
-                diff = fabs(PR[i][t] - PR[i][it]);
-           
-            it++;
-        }   
-        printf("%s %d %.7f\n", g->vertex[i], outlinks[i], PR[i][it]);
-        // Print out number of iterations
-        printf("Iterations: %d=",it);
-    }
+    int v = 0;
     
-
-   /*
-   // int v = 0;
-    while ((it < maxIterations) && (diff >= diffPR)) {   
+    // Loop while iteration is less than maxIterations and diff is greater than the min difference in PageRank sum
+    while ((it < maxIterations) && (diff >= diffPR)) {  
+        // t = iteration number + 1
         t = it + 1; 
-        diff = 0;
-        // For every link that Pi is connected to
-        for (i = 0; i < g->nV; i++) {
-            PageSum = getSum(g, i, PR, it, outlinks, inlinks);
-            PR[i][t] = mult * PageSum;
-
-            diff = fabs(PR[i][t] - PR[i][it]);
+        // Calculate the PageRank for every page
+        for (i = 0; i < N; i++) {
+            // PageRank = (1 - d)/N + d * (For all reference pages of i (pJ), the sum of: PR[pJ][t] * WeightedInput[pJ][pI] * WeightedOutput[pJ][pI])
+            
+            PR[i][t] = mult + (d * getSum(g, i, PR, it, outlinks, inlinks));
+            
         }
+        // Calculate the difference in PageRank sum
+        for (v = 0; v < N; v++) {
+                diff += fabs(PR[v][t] - PR[v][it]);
+        }
+        // Increment iteration
         it++;
     }   
-    printf("--%d\n", it);
 
-   for (i = 0; i < g->nV; i++) {
-        printf("%s %d %.7f\n", g->vertex[i], outlinks[i], PR[i][it]);
-   }
-   */
-   free(outlinks);
-   free(inlinks);
+    /************************************************************
+     SORT PAGERANKS IN DESCENDING 
+    ************************************************************/
+    // Array to store the index of PageRanks in descending order
+    int *order = calloc(N , sizeof(int));
+    // Array to show if a value has been added to the order array
+    int *checked = calloc(N, sizeof(int));
+
+    int maxIndex = 0;
+    int j = 0;
+    for (j = 0; j < N; j++) {
+        // getLargest returns the index value of the largest PageRank that has not been checked
+        maxIndex = getLargest(PR, checked, N, it);
+        order[j] = maxIndex;
+    }
     
+    /************************************************************
+     WRITE PAGERANKS IN DESCENDING ORDER TO A FILE
+    ************************************************************/
+    FILE *fp = fopen("pagerankList.txt", "w");
+    for (i = 0; i < N; i++) {
+        fprintf(fp,"%s, %d, %.7f\n", g->vertex[order[i]], outlinks[order[i]], PR[order[i]][it]);
+    }
+    fclose(fp);
     
-    // Pi is what vertex is pointing to 
-    // Pj is what Pi is pointing to (will multiple Pj's)
-    // Setting all pageranks to 1/N 
+    /************************************************************
+     FREE MEMORY ALLOCATED TO ARRAYS
+    ************************************************************/
+    free(outlinks);
+    free(inlinks);
+    free(order);
+    free(checked);
+    free(PR);
     
-    // Next iteration of the pagerank 
-    // d is the damp 
-    // M = size 
-    // Sum of For all of Pj that is connected to Pi 
-    // Everything connected to Pi is Pj = Outlinks of Pj are references 
-    // Count inlinks of references (whats pointing to) 
-    
-    // Wout is the outlinks 
 }
 
-double getSum(Graph g, int vertex, double **PR, int iteration, int *outlinks, int *inlinks) {
-    // For every link that Pi is connected to
+// Returns the index of the largest PageRank value that has not been checked 
+int getLargest(double **PR, int *checked, int N, int it) {
+    int i = 0;
+    float max = 0; 
+    int maxIndex = 0;
     
+    for (i = 0; i < N; i++) {
+        // If the PageRank value is greater than max and has not been checked
+        if (PR[i][it] > max && checked[i] == 0) {
+            max = PR[i][it];
+            maxIndex = i;
+        }
+    }
+    
+    checked[maxIndex] = 1;
+    
+    return maxIndex; 
+}
+
+// Takes in a graph, a vertex, the PageRank matrix, iteration number and arrays containing inlinks and outlinks
+// Returns the sum (float)
+double getSum(Graph g, int vertex, double **PR, int iteration, int *outlinks, int *inlinks) {
+
     int i;
     double sum = 0; 
     // For every vertex
-    for (i = 0; i < outlinks[vertex]; i++) {
-        if (g->edges[vertex][i]) {
-            // If there is an outlink from the vertex
-            sum += PR[i][iteration] * getWin(g, vertex, i, inlinks) * getWout(g, vertex, i, outlinks);
+    for (i = 0; i < g->nV; i++) {
+        // If there is an outlink from the vertex
+        if (g->edges[i][vertex]) {
+            sum += PR[i][iteration] * getWin(g, i, vertex, inlinks) * getWout(g, i, vertex, outlinks);
         }
     }
 
     return sum;
 }
 
+// Calculates the Weighted input of pI
 double getWin(Graph g, int pI, int pJ, int *inlinks) {
     // Win is the number of outlinks 
     double win; 
     double denom = 0;
     int i; 
+    // Calculate the denominator (sum of inlinks of outlinks of pI)
     for (i = 0; i < g->nV; i++) {
-        // I points to a page
-        if (g->edges[i][pI]) {
+        // If there is an edge from pI to vertex[i]
+        if (g->edges[pI][i]) {
+            // Add the number of vertex[i]'s inlinks to the denominator
             denom += inlinks[i];
         }
     }
+    
+    // Divide the number of inlinks to pJ by the sum of inlinks for outlinks of pI
+
     win = inlinks[pJ] / denom; 
-    // divided by the sum of Inlinks for pages pI points to
+    
     return win;
 }
 
+// Calculates the Weighted output of 
 double getWout(Graph g, int pI, int pJ, int *outlinks) {
     // Wout is the number of outlinks 
     double wout; 
     double denom = 0;
     int i; 
-    // If pI has an outlink to i
+    // Calculate the denominator (sum of outlinks of outlinks of pI)
     for (i = 0; i < g->nV; i++) {
-        if (g->edges[i][pI]) {
+        // If there is an edge from pI to vertex[i]
+        if (g->edges[pI][i]) {
+            // Add the number of vertex[i]'s outlinks to the denominator
+            // If the number of outlinks is 0, let it be 0.5
+            if (outlinks[i] == 0) {
+                denom += 0.5;
+            }
             denom += outlinks[i];
         }
     }
-    wout = outlinks[pJ] / denom; 
-    // divided by the sum of Inlinks for pages pI points to
+    // Divide the number of inlinks to pJ by the sum of inlinks for outlinks of pI
+    // If the number of outlinks is 0, let it be 0.5
+    if (outlinks[pJ] == 0) {
+        wout = 0.5 / denom;
+    } else { 
+        wout = outlinks[pJ] / denom; 
+    }
+
     return wout;
 }
 
+// Determine the number of outlinks for each vertex[i]
 void getOutlinks(Graph g, int *outlinks) {
     int count = 0;
     int i; 
     int j;
-        // For a vertex i
+    // For each vertex
     for (i = 0; i < g->nV; i++) {
         for (j = 0; j < g->nV; j++) {
+            // If there is an edge between vertex[i] and vertex[j] increment count
             if (g->edges[i][j])
 	            count++;
         }
@@ -222,13 +255,15 @@ void getOutlinks(Graph g, int *outlinks) {
     }
 }
 
+// Determine the number of inlinks for each vertex[i]
 void getInlinks(Graph g, int *inlinks) {
     int count = 0;
     int i; 
     int j;
-        // For a vertex i
+    // For each vertex
     for (i = 0; i < g->nV; i++) {
         for (j = 0; j < g->nV; j++) {
+        // If there is an edge between vertex[i] and vertex[j] increment count
             if (g->edges[j][i])
 	            count++;
         }
@@ -237,4 +272,3 @@ void getInlinks(Graph g, int *inlinks) {
     }
 }
 
-// Create a list of urls 
