@@ -9,6 +9,7 @@ int main(void) {
 
 FILE *data;
     
+    // gcc -Wall -Werror -std=gnu99 -O -lm -o invertTest invertTest.c ReadData.c Graph.c LList.c inverted.c -g
     
     if ((data = fopen("collection.txt","r")) == NULL) {
 	    fprintf(stderr, "Couldn't open file: collection.txt");
