@@ -46,26 +46,15 @@ int main(int argc, char *argv[]) {
     fclose(data); 
 
     LList urlList = GetCollection();
-    printf("%d\n", urlList->nitems);
-    struct LListNode *curr;
-    for (curr = urlList->first; curr != NULL; curr=curr->next) {
-        printf("%s\n", curr->value);
-    }
-    
-    printf("\n");
     Graph g = GetGraph(urlList); 
     
-    showGraph(g, 1);
-    printf("\n");
-    showGraph(g, 0);
-    printf("\n");
-
     double d = atof(argv[1]);
     double diffPR = atof(argv[2]); 
     int maxIterations = atoi(argv[3]);
     
     calculatePageRank(g, d, diffPR, maxIterations);
-
+    
+    disposeGraph(g);
   return 0;
 }
 
