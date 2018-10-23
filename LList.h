@@ -20,7 +20,6 @@ typedef struct LListRep {
 } LListRep;
 
 
-
 // create a new empty LList
 LList newLList();
 
@@ -30,8 +29,9 @@ LListNode *newLListNode(char *it);
 // free up all space associated with list
 void freeLList(LList);
 
-// check sanity of a LList (for testing)
-int validLList(LList);
+// searches if a value exists within a list
+// returns -1, 0, 1 if L is NULL or empty, Value doesn't exist or exists respectively.
+int searchValue(LList L, char *search);
 
 // return number of elements in a list
 int LListLength(LList);

@@ -4,6 +4,13 @@
 #define READDATA_H
 
 #include "LList.h"
+#include "Graph.h"
+#include "inverted.h"
+#include "ReadData.h"
+
+#define TRUE 1
+#define FALSE 0
+
 
 // GetCollection()
 // -> Create a set (list) of urls to process by reading data from file collection.txt
@@ -24,10 +31,11 @@ Graph GetGraph(LList urls);
 // read <url>.txt file, and update graph by adding a node and outgoing links
 
 
-// GetInvertedList(List_of_urls)
+InvertedList GetInvertedList(LList urls);
 // Create empty inverted list (use say List of lists, BST where values are lists, etc)
 // For each url in List_of_Urls
 // read <url>.txt file, and update inverted index
+
 
 
 #endif

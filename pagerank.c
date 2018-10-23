@@ -18,7 +18,7 @@
 #define MAXURLLEN 1000
 
 // ==== COMPILING ====
-// gcc -Wall -Werror -std=gnu99 -O -lm -o pagerank pagerank.c ReadData.c LList.c Graph.c -g
+// gcc -Wall -Werror -std=gnu99 -O -lm -o pagerank pagerank.c ReadData.c LList.c Graph.c inverted.c -g
 void calculatePageRank(Graph g, double d, double diffPR, int maxIterations);
 double getSum(Graph g, int vertex, double **PR, int iteration, int *outlinks, int *inlinks);
 double getWin(Graph g, int pI, int pJ, int *inlinks);
@@ -271,4 +271,3 @@ void getInlinks(Graph g, int *inlinks) {
         count = 0;
     }
 }
-
