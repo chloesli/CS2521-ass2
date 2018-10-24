@@ -1,7 +1,5 @@
 // Reads Data from a given collection of pages in the file collection.txt
-
 // Builds a graph structure using adjacency Matrix or List Representation
-
 // Calculate weighted pagerank for every url in collection.txt
 
 #include <stdlib.h>
@@ -17,56 +15,46 @@
 
 #define MAXURLLEN 1000
 
-// ==== COMPILING ====
-// gcc -Wall -Werror -std=gnu99 -O -lm -o pagerank pagerank.c ReadData.c LList.c Graph.c -g
+/************************************************************
+  FUNCTION DECLARATIONS
+************************************************************/
+
 void calculatePageRank(Graph g, double d, double diffPR, int maxIterations);
 double getSum(Graph g, int vertex, double **PR, int iteration, int *outlinks, int *inlinks);
 double getWin(Graph g, int pI, int pJ, int *inlinks);
 double getWout(Graph g, int pI, int pJ, int *outlinks);
-
 void getOutlinks(Graph g, int *outlinks);
 void getInlinks(Graph g, int *inlinks);
-
 int getLargest(double **PR, int *checked, int N, int it);
-int main(int argc, char *argv[]) {
 
+int main(int argc, char *argv[]) {
+    // If the number of arguments provided is not enough, print out an error message
     if (argc != 4) {
         fprintf(stderr, "Usage: %s <d - damping factor> <diffPR - difference in PageRank sum> <maxIterations - maximum iterations>\n", argv[0]);
         return 1;
     }
     
-    
+    // If there collection.txt is NULL, print out an error message 
     FILE *data;
-    
-    
     if ((data = fopen("collection.txt","r")) == NULL) {
 	    fprintf(stderr, "Couldn't open file: collection.txt");
 	    return 1;
     }
     fclose(data); 
-
+    // Gets a linked list of URLS from collection.txt
     LList urlList = GetCollection();
-    printf("%d\n", urlList->nitems);
-    struct LListNode *curr;
-    for (curr = urlList->first; curr != NULL; curr=curr->next) {
-        printf("%s\n", curr->value);
-    }
-    
-    printf("\n");
+    // Reads each url file and creates a graph
     Graph g = GetGraph(urlList); 
-    
-    showGraph(g, 1);
-    printf("\n");
-    showGraph(g, 0);
-    printf("\n");
-
+    // Gets the dampening factor, difference in PageRank sum and max iterations from command line arguments
     double d = atof(argv[1]);
     double diffPR = atof(argv[2]); 
     int maxIterations = atoi(argv[3]);
-    
+    // Calculates PageRank
     calculatePageRank(g, d, diffPR, maxIterations);
-
-  return 0;
+    
+    // Free memory associated with Graph
+    disposeGraph(g);
+    return 0;
 }
 
 void calculatePageRank(Graph g, double d, double diffPR, int maxIterations){
@@ -164,7 +152,7 @@ int getLargest(double **PR, int *checked, int N, int it) {
             maxIndex = i;
         }
     }
-    
+    // Marked the largest to be returned as checked
     checked[maxIndex] = 1;
     
     return maxIndex; 
@@ -187,7 +175,7 @@ double getSum(Graph g, int vertex, double **PR, int iteration, int *outlinks, in
     return sum;
 }
 
-// Calculates the Weighted input of pI
+// Calculates the Weighted input of [pI][pJ]
 double getWin(Graph g, int pI, int pJ, int *inlinks) {
     // Win is the number of outlinks 
     double win; 
@@ -209,7 +197,7 @@ double getWin(Graph g, int pI, int pJ, int *inlinks) {
     return win;
 }
 
-// Calculates the Weighted output of 
+// Calculates the Weighted output of [pI][pJ]
 double getWout(Graph g, int pI, int pJ, int *outlinks) {
     // Wout is the number of outlinks 
     double wout; 
@@ -271,4 +259,3 @@ void getInlinks(Graph g, int *inlinks) {
         count = 0;
     }
 }
-
