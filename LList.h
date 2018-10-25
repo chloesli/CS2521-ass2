@@ -1,5 +1,5 @@
 // doubly-linked list ADT
-
+// Taken from COMP2521 S2 Week 3 Lab
 #ifndef LLIST_H
 #define LLIST_H
 
@@ -8,6 +8,7 @@ typedef struct LListRep *LList;
 
 typedef struct LListNode {
 	char   *value;  
+	float    count; 
 	struct LListNode *prev;
 	struct LListNode *next;
 	               

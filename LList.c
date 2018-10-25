@@ -1,4 +1,5 @@
 //  Implementation of doubly-linked list ADT
+// Taken from COMP2521 S2 Week 3 Lab
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,6 +18,7 @@ LListNode *newLListNode(char *it)
 	new = malloc(sizeof(LListNode));
 	assert(new != NULL);
 	new->value = strdup(it);
+	new->count = 0;
 	new->prev = new->next = NULL;
 	return new;
 }
@@ -49,8 +51,6 @@ void freeLList(LList L)
 	free(L);
 }
 
-// searches if a value exists within a list
-// returns -1, 0, 1 if L is NULL or empty, Value doesn't exist or exists respectively.
 int searchValue(LList L, char *search) {
     if (L == NULL || L->nitems == 0) {
         return -1;
