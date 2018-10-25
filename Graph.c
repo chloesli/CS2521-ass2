@@ -1,4 +1,6 @@
-
+// graph.c ... Graph of strings (adjacency matrix)
+// Written by John Shepherd, September 2015
+// Taken from CS2521 S2 Week8 Lab
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
