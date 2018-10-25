@@ -41,6 +41,7 @@ void swapLListNode(LList L, LListNode *prev, LListNode *next);
 // returns -1, 0, 1 if L is NULL or empty, Value doesn't exist, or exists respectively.
 int searchValue(LList L, char *search);
 
+// returns the first node in L given the search word
 LListNode *getNode(LList L, char *word);
 
 // return number of elements in a list

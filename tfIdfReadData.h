@@ -14,6 +14,8 @@ int getNumPages();
 // use invertedIndex.txt to return a LList of the pages that contain the searchterm
 LList getTermUrls (char *word);
 
+// Functions used to normalise words, 
+// i.e. ensure all characters are part of the alphabet and lowercase
 char *normalise(char *string);
 
 #endif

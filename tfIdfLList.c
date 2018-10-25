@@ -79,6 +79,7 @@ void freeLList(LList L)
 	free(L);
 }
 
+// swaps any two nodes in a LList
 void swapLListNode(LList L, LListNode *prev, LListNode *next) {
 
     if (L->first != prev) {
@@ -104,6 +105,8 @@ void swapLListNode(LList L, LListNode *prev, LListNode *next) {
 
 }
 
+// searches if a value exists within a list
+// returns -1, 0, 1 if L is NULL or empty, Value doesn't exist, or exists respectively.
 int searchValue(LList L, char *search) {
     if (L == NULL || L->nitems == 0) {
         return -1;
@@ -122,6 +125,7 @@ int searchValue(LList L, char *search) {
     return found;
 }
 
+// returns the first node in L given the search word
 LListNode *getNode(LList L, char *word) {
 
     LListNode *cur = L->first;
@@ -135,6 +139,7 @@ LListNode *getNode(LList L, char *word) {
     return cur;
 
 }
+
 // return number of elements in a list
 int LListLength(LList L)
 {

@@ -61,12 +61,13 @@ LList getTermUrls (char *word) {
 }
 
 
-// Normalise functions
 
+// Functions used to normalise words, 
+// i.e. ensure all characters are part of the alphabet and lowercase
 static char *deletechar(char *string, int index) {
     int size = strlen(string);
-    char *a = malloc(sizeof(char) *(strlen(string)));
-    memset(a, '\0', size);
+    char *a = malloc(sizeof(char) * (strlen(string)+1));
+    memset(a, '\0', size+1);
     int i;
 
     if (index == 0) {
@@ -75,41 +76,36 @@ static char *deletechar(char *string, int index) {
     }
 
     else if (index == size - 1) {
-        i = index;
- 
-        strncpy(a, string, i);
+    
+        strncpy(a, string, size - 1);
     
     }
     
+    free(string);
     return a;
 }
 
 char *normalise(char *string) {
-    char *new;
-    char *temp;
-        if (!isalpha(string[0])) {
-            new = deletechar(string, 0);
-        }
+    
+    char *new = string;
+    
+    if (!isalpha(string[0])) {
+        new = deletechar(string, 0);
+    }
 
-        else {
-            new = strdup(string);
-            // free(string);
-        }
-        
-        int i = strlen(new) - 1;
-        if (!isalpha(new[i])) {
-            temp = new;
-            new = deletechar(new, i);
-            free(temp);
-        }
+    
+    int i = strlen(new) - 1;
+    if (!isalpha(new[i])) {
+        new = deletechar(new, i);
+    }
+    
     int x = 0;
     while (new[x]) {
     
-            new[x] = tolower(new[x]);
+        new[x] = tolower(new[x]);
         
         x++;
     }  
-
 
     return new;
 }

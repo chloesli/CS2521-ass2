@@ -12,6 +12,7 @@
 #define FALSE 0
 #define MAX_OUT 30
 
+
 double idf(char *word);
 void tfIdfSorting(LList totalUrls);
 void printResults(LList totalUrls);
@@ -36,8 +37,9 @@ int main (int argc, char *argv[]) {
     LListNode *cur = totalUrls->first;
     while (cur != NULL) {
     
-        // make a linkedlist of search terms
+        // open each Url
         char *dest = strdup(cur->value);
+        dest = realloc(dest, strlen(dest)+5);
         strcat(dest, ".txt");
         FILE *f = fopen(dest, "r");
         char *val = calloc(sizeof(char), 1000);
@@ -46,9 +48,10 @@ int main (int argc, char *argv[]) {
         LList currSearchTerms = newLList();
         int start = FALSE;
         
-        // only after section 2
+        // scanning from the file
         while (fscanf(f, "%s", val) == 1) {
         
+            // only considers strings when section-2 is found
             if (start == TRUE) {
             
                 if (strcmp(val, "#end") == 0) {
@@ -58,13 +61,17 @@ int main (int argc, char *argv[]) {
                 wordCount++;
                 val = normalise(val);
                 
+                // when function comes across a seachterm
                 if (searchValue(searchTerms, val) == 1) { 
+                
+                    // either create a new node to currSearchTerms
                     if (searchValue(currSearchTerms, val) < 1) {
                     
                         appendLList(currSearchTerms, val);
                         LListNode *temp = getNode(currSearchTerms, val);
                         temp->count = temp->count + 1;
                         
+                    // or just increment the counter for that node/searchTerm
                     } else {
                         
                         LListNode *temp = getNode(currSearchTerms, val);
@@ -79,7 +86,7 @@ int main (int argc, char *argv[]) {
             
         }
         
-        //encode results of each url in totalUrl
+        //calculate results of each url and store them in totalUrl
         LListNode *curST = currSearchTerms->first;
         double sum = 0;
         
@@ -102,14 +109,15 @@ int main (int argc, char *argv[]) {
         
         
         fclose(f);
-        cur = cur->next;
         free(dest);
         free(val);
+        cur = cur->next;
         freeLList(currSearchTerms);
     }
     
     freeLList(searchTerms);
     
+    // sort tfIdf results and print them to stdout
     tfIdfSorting(totalUrls);
     printResults(totalUrls);
     
@@ -204,8 +212,12 @@ void tfIdfSorting(LList totalUrls) {
 // the inverse document frequency.
 double idf(char *word) {
     
+    LList urls = getTermUrls(word);
+    
     int numPages = getNumPages();
-    int numTermPages = getTermUrls(word)->nitems;
+    int numTermPages = urls->nitems;
+    
+    free(urls);
     
     return log10((double)numPages/numTermPages);
 
