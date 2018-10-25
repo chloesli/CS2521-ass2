@@ -20,9 +20,4 @@ LList GetCollection();
 // read <url>.txt file, and update graph by adding a node and outgoing links
 Graph GetGraph(LList urls);
 
-// Create empty inverted list
-// For each url in List_of_Urls
-// read <url>.txt file, and update inverted index
-InvertedList GetInvertedList(LList urls);
-
 #endif

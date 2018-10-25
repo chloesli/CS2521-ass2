@@ -5,6 +5,7 @@
 #include <string.h>
 #include <assert.h>
 #include "ReadData.h"
+#include "invertReadData.h"
 
 #include "inverted.h"
 
@@ -15,7 +16,7 @@ int main(void) {
 
     FILE *data;
     
-    // gcc -Wall -Werror -std=gnu99 -O -lm -o invertTest invertTest.c ReadData.c Graph.c LList.c inverted.c -g
+    // gcc -Wall -Werror -std=gnu99 -O -lm -o invertTest ReadData.c Graph.c LList.c inverted.c -g
     
     if ((data = fopen("collection.txt","r")) == NULL) {
 	    fprintf(stderr, "Couldn't open file: collection.txt");
@@ -29,7 +30,7 @@ int main(void) {
     // creates the invertedIndex.txt
     GetInvertedList(urlList);
     
-    //InvertedList newIL GetInvertedList(urlList);
+    //InvertedList newIL = GetInvertedList(urlList);
     // showTree(newIL);
     
     return 0;
