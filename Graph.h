@@ -1,6 +1,6 @@
 // graph.h ... Interface to Graph of strings
+// Taken from CS2521 S2 Week8 Lab
 // Written by John Shepherd, September 2015
-
 #ifndef GRAPH_H
 #define GRAPH_H
 typedef unsigned char Num;

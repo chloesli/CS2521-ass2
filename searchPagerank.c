@@ -6,49 +6,47 @@
 
 #include "LList.h"
 #include "Graph.h"
-#include "pagerank.h"
 #include "ReadData.h"
-#include "inverted.h"
-
+#include "strdup.h"
 /************************************************************
   FUNCTION DECLARATIONS
 ************************************************************/
 
 LList getMatch(LList terms);
-void addtoMatchList(LList matches, char *url); 
+void addtoMatchList(LList matches, char *url);
 LList orderMatchList(LList matches);
-double getPRfromList (char *url); 
+double getPRfromList (char *url);
 LList pageRankList(LList matches);
 
 void printOrder(LList matches, LList prList, int max);
 void getLargest(LList matches, LList prList, int *checked);
 
 int main(int argc, char *argv[]) {
-    // If there are no enough arguments, print out an error message 
+    // If there are no enough arguments, print out an error message
     if (argc <= 1) {
         fprintf(stderr, "Usage: %s <search term> \n", argv[0]);
         return 1;
     }
     // Check pagerankList.txt is not NULL
     FILE *data;
-    
+
     if ((data = fopen("pagerankList.txt","r")) == NULL) {
 	    fprintf(stderr, "Couldn't open file: pagerankList.txt");
 	    return 1;
     }
-    fclose(data); 
+    fclose(data);
     // Check invertedIndex.txt is not NULL
     if ((data = fopen("invertedIndex.txt","r")) == NULL) {
 	    fprintf(stderr, "Couldn't open file: invertedIndex.txt");
 	    return 1;
     }
     fclose(data);
-        
+
     // Create a linked list for search terms using command line arguments
     LList new = newLList();
     LListNode *curr = NULL;
     int i = 1;
-    // Loop while index is less than argc 
+    // Loop while index is less than argc
     for (i = 1; i < argc; i++) {
         char *val = strdup(argv[i]);
         LListNode *newNode = newLListNode(val);
@@ -67,14 +65,14 @@ int main(int argc, char *argv[]) {
         new->last->next = NULL;
         new->nitems++;
     }
-    // Get a list of urls that contain the search terms 
-    LList matches = getMatch(new); 
-    // Get a list of pageranks for the urls 
+    // Get a list of urls that contains the search terms
+    LList matches = getMatch(new);
+    // Get a list of pageranks for the urls
     LList prList = pageRankList(matches);
     // Prints urls in the correct order
-    int max = matches->nitems; 
+    int max = matches->nitems;
     printOrder(matches, prList, max);
-    
+
     /************************************************************
      FREE MEMORY ALLOCATED TO LISTS
     ************************************************************/
@@ -112,7 +110,7 @@ void getLargest(LList matches, LList prList, int *checked) {
         /************************************************************
         If the current url:
         - Has more search term matches
-        - OR has the same amount of search terms and has a larger PageRank than the current topURL 
+        - OR has the same amount of search terms and has a larger PageRank than the current topURL
         - And the url has not been printed
         Set it to the TOPURL
         ************************************************************/
@@ -134,10 +132,10 @@ void getLargest(LList matches, LList prList, int *checked) {
 // Returns a list of PageRanks for the urls in matches
 LList pageRankList(LList matches) {
     LList prList = newLList();
-    LListNode *curr = matches->first; 
+    LListNode *curr = matches->first;
     LListNode *newCurr = NULL;
     LListNode *newNode = NULL;
-    // Loops through the list of URLS 
+    // Loops through the list of URLS
     for (curr = matches->first; curr != NULL; curr = curr->next) {
         // Makes a node with its url name as its value
         newNode = newLListNode(curr->value);
@@ -167,10 +165,10 @@ double getPRfromList (char *url) {
     FILE *pagerankList = fopen("pagerankList.txt", "r");
     char *value = malloc(sizeof(char) * 1000);
     int outlinks;
-    double pageRank = 0.000; 
+    double pageRank = 0.000;
     // Scans the pagerankList for the url
     while (fscanf(pagerankList, "%s", value)){
-        // If the url is found 
+        // If the url is found
         if (strstr(value, url)) {
             // Put the next number and double into outlinks and PageRank as we know the format of pagerankList.txt
             fscanf(pagerankList, "%d, %lf", &outlinks, &pageRank);
@@ -188,17 +186,17 @@ double getPRfromList (char *url) {
 LList getMatch(LList terms) {
     // Reads from invertedIndex.txt
     FILE *index = fopen("invertedIndex.txt", "r");
-    
-    char *word = calloc(sizeof(char), 1000); 
+
+    char *word = calloc(sizeof(char), 1000);
     // Create a new empty list
     LList matches = newLList();
-    LListNode *curr = terms->first; 
+    LListNode *curr = terms->first;
     // Checks if urls should be taken in
     int urlscan = 0;
-    while (fscanf(index, "%s", word) == 1) { 
+    while (fscanf(index, "%s", word) == 1) {
         // If the current string is not a url
         if (!strstr(word, "url")) {
-            urlscan = 0; 
+            urlscan = 0;
             // Search through the list of terms to check if the word is a search term
             for (curr = terms->first; curr != NULL; curr = curr->next) {
                 // If it is, set urlscan to 1
@@ -206,23 +204,23 @@ LList getMatch(LList terms) {
                     urlscan = 1;
                     break;
                 }
-                   
+
             }
         }
         // If the string is a url and urlscan is true
-        // The url contains the search term 
+        // The url contains the search term
         if(strstr(word, "url") && urlscan == 1) {
-            // The search term is added to the matches list 
+            // The search term is added to the matches list
             addtoMatchList(matches, word);
-            
+
         }
 
     }
-          
+
     fclose(index);
     free(word);
     // Returns matches list
-    return matches; 
+    return matches;
 }
 
 // Function is called by the getMatch function and simply adds the url to the match list
@@ -238,11 +236,11 @@ void addtoMatchList(LList matches, char *url) {
         newNode->count = 1;
         matches->nitems++;
     }
-    // Otherwise 
+    // Otherwise
     else {
         LListNode *curr = matches->first;
         int done = 0;
-        // Loops through the matches list 
+        // Loops through the matches list
         for (curr = matches->first; curr != NULL; curr = curr->next) {
             // If the url is already in the list, incremen the nodes count
             if (strcmp(curr->value, url) == 0) {
@@ -258,11 +256,11 @@ void addtoMatchList(LList matches, char *url) {
             // Set its count to 1
             newNode->count = 1;
             matches->last->next = newNode;
-            newNode->prev = matches->last;  
-            matches->last = newNode; 
+            newNode->prev = matches->last;
+            matches->last = newNode;
             matches->last->next = NULL;
             matches->nitems++;
         }
     }
-    
+
 }
