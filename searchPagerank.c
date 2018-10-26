@@ -6,9 +6,7 @@
 
 #include "LList.h"
 #include "Graph.h"
-#include "pagerank.h"
 #include "ReadData.h"
-#include "inverted.h"
 
 /************************************************************
   FUNCTION DECLARATIONS
